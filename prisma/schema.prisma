@@ -15,9 +15,9 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
+  id       String @id @default(uuid())
   name     String
-  email    String
+  email    String @unique
   password String
 
   createdAt DateTime @default(now())
@@ -27,7 +27,7 @@ model User {
 }
 
 model Product {
-  id          Int    @id @default(autoincrement())
+  id          String @id @default(uuid())
   name        String
   price       Float
   description String
@@ -35,14 +35,14 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  categoryId Int?
+  categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id])
 
   @@map("products")
 }
 
 model Category {
-  id   Int    @id @default(autoincrement())
+  id   String @id @default(uuid())
   name String
 
   createdAt DateTime @default(now())

@@ -15,7 +15,7 @@ export class CreateCategoryUseCase {
         return category;
     }
 
-    async executeUpdate(id: number, data: any) {
+    async executeUpdate(id: string, data: any) {
         if (!id) throw new BadRequestException('Id is required');
 
         const category = await this.repository.update(id, data);
@@ -27,12 +27,12 @@ export class CreateCategoryUseCase {
         return categories;
     }
 
-    async executeFindById(id: number) {
+    async executeFindById(id: string) {
         const category = await this.repository.findById(id);
         return category;
     }
 
-    async executeDelete(id: number) {
+    async executeDelete(id: string) {
         const category = await this.repository.delete(id);
         return category;
     }

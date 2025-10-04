@@ -17,7 +17,7 @@ export class PrismaCategoryRepository implements ICategoryRepository {
         return await this.prisma.category.findMany();
     }
 
-    async findById(id: number): Promise<any> {
+    async findById(id: string): Promise<any> {
         return await this.prisma.category.findUnique({
             where: {
                 id
@@ -25,7 +25,7 @@ export class PrismaCategoryRepository implements ICategoryRepository {
         });
     }
 
-    async update(id: number, category: Category): Promise<any> {
+    async update(id: string, category: Category): Promise<any> {
         await this.prisma.category.update({
             where: {
                 id
@@ -34,7 +34,7 @@ export class PrismaCategoryRepository implements ICategoryRepository {
         });
     }
 
-    async delete(id: number): Promise<any> {
+    async delete(id: string): Promise<any> {
         await this.prisma.category.delete({
             where: {
                 id

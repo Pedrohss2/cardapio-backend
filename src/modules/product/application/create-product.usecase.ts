@@ -15,7 +15,7 @@ export class CreateProductUseCase {
         return product;
     }
 
-    async executeUpdate(id: number, data: any) {
+    async executeUpdate(id: string, data: any) {
         if (!id) throw new BadRequestException('Id is required');
 
         const product = await this.repository.update(id, data);
@@ -27,12 +27,12 @@ export class CreateProductUseCase {
         return products;
     }
 
-    async executeFindById(id: number) {
+    async executeFindById(id: string) {
         const product = await this.repository.findById(id);
         return product;
     }
 
-    async executeDelete(id: number) {
+    async executeDelete(id: string) {
         const product = await this.repository.delete(id);
         return product;
     }
