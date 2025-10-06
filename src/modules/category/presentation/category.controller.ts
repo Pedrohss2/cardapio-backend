@@ -26,7 +26,6 @@ export class CategoryController {
     }
 
     @Get()
-    @UseGuards(AuthGuard)
     findAll() {
         return this.createCategoryUseCase.executeFindAll();
     }

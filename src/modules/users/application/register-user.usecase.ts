@@ -22,6 +22,7 @@ export class RegisterUserUseCase {
     }
 
     const existingUser = await this.userRepository.findByEmail(userDto.email);
+
     if (existingUser) throw new HttpException({ status: HttpStatus.CONFLICT, error: 'Usuário já existe!' }, HttpStatus.CONFLICT);
 
     const user = new User(

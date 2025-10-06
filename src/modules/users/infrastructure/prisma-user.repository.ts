@@ -33,7 +33,8 @@ export class PrismaUserRepository implements UserRepository {
 
     const createdUser = await this.prisma.user.create({
       data: {
-        ...user
+        ...user,
+        password: hashedPassword,
       },
     });
 
