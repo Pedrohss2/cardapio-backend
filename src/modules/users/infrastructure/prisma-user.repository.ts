@@ -33,10 +33,7 @@ export class PrismaUserRepository implements UserRepository {
 
     const createdUser = await this.prisma.user.create({
       data: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        password: hashedPassword,
+        ...user
       },
     });
 
@@ -49,8 +46,7 @@ export class PrismaUserRepository implements UserRepository {
     const updatedUser = await this.prisma.user.update({
       where: { id: user.id },
       data: {
-        name: user.name,
-        email: user.email,
+        ...user,
         password: hashedPassword,
       },
     });

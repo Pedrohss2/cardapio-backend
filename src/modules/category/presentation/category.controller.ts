@@ -13,7 +13,7 @@ import {
 import { CreateCategoryUseCase } from '../application/create-category.usecase';
 import { CreateCategorytDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('category')
 export class CategoryController {
@@ -26,11 +26,13 @@ export class CategoryController {
     }
 
     @Get()
+    @UseGuards(AuthGuard)
     findAll() {
         return this.createCategoryUseCase.executeFindAll();
     }
 
     @Get(':id')
+    @UseGuards(AuthGuard)
     findOne(@Param('id') id: string) {
         return this.createCategoryUseCase.executeFindById(id);
     }

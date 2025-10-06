@@ -1,7 +1,7 @@
 import { IsString, IsEmail, MinLength } from 'class-validator';
 
 export class RegisterUserDto {
-
+  constructor() { }
   @IsString()
   name: string;
 

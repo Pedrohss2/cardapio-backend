@@ -38,6 +38,7 @@ export class ProductController {
     }
 
     @Delete("/products/:id")
+    @UseGuards(AuthGuard)
     async deleteProduct(@Param("id") id: string) {
         const product = await this.product.executeDelete(id);
         return product;

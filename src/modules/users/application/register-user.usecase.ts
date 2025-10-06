@@ -1,14 +1,18 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UserRepository } from '../domain/user.repository';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import type { UserRepository } from '../domain/user.repository';
 import { User } from '../domain/user.entity';
 import { RegisterUserDto } from '../presentation/dto/register-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class RegisterUserUseCase {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(
+    @Inject('IUserRepository')
+    private readonly userRepository: UserRepository
+  ) { }
 
   async execute(userDto: RegisterUserDto): Promise<User> {
+
     if (!userDto.password || userDto.password.trim() === '') {
       throw new HttpException({
         status: HttpStatus.BAD_REQUEST,
@@ -28,5 +32,10 @@ export class RegisterUserUseCase {
     );
 
     return this.userRepository.create(user);
+  }
+
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findByEmail(email);
   }
 }

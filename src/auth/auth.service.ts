@@ -1,28 +1,34 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/modules/users/users.service';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/modules/users/domain/user.entity';
+import { RegisterUserUseCase } from '../modules/users/application/register-user.usecase';
+import { User } from '../modules/users/domain/user.entity';
+import { RegisterUserDto } from 'src/modules/users/presentation/dto/register-user.dto';
+import { LoginUserDto } from 'src/modules/users/presentation/dto/login-user.dto';
+
 
 @Injectable()
 export class AuthService {
     constructor(
-        private usersService: UsersService,
-        private jwtService: JwtService,
+        private readonly registerUserUseCase: RegisterUserUseCase,
+        private readonly jwtService: JwtService,
     ) { }
 
     async signIn(
-        email: string,
-        pass: string,
+        loginUserDto: LoginUserDto
     ): Promise<{ access_token: string }> {
-        const user = await this.usersService.findByEmail(email);
+        const { email, password } = loginUserDto;
+
+        const user = await this.registerUserUseCase.findByEmail(email);
+
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
         }
 
-        const isPasswordValid = await bcrypt.compare(pass, user.password);
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
         if (!isPasswordValid) {
-            throw new UnauthorizedException('Invalid credentials');
+            throw new UnauthorizedException('Credenciais inválidas');
         }
 
         const payload = { sub: user.id, email: user.email };
@@ -32,24 +38,26 @@ export class AuthService {
     }
 
     async register(
-        name: string,
-        email: string,
-        password: string,
+        registerUserDto: RegisterUserDto
     ): Promise<{ access_token: string }> {
-        const existingUser = await this.usersService.findByEmail(email);
+        const { name, email, password } = registerUserDto;
+
+        const existingUser = await this.registerUserUseCase.findByEmail(email);
+
         if (existingUser) {
             throw new HttpException({
                 status: HttpStatus.CONFLICT,
                 error: 'Usuário já existe',
-                message: 'Usuário já existe.',
+                message: 'Usuário já possui um login',
             }, HttpStatus.CONFLICT)
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(registerUserDto.password, 10);
 
-        const user = await this.usersService.create(new User('', name, email, hashedPassword));
+        const user = await this.registerUserUseCase.execute(new User('', name, email, hashedPassword));
 
         const payload = { sub: user.id, email: user.email };
+
         return {
             access_token: await this.jwtService.signAsync(payload),
         };
