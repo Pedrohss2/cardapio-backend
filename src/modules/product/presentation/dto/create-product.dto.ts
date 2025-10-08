@@ -11,7 +11,11 @@ export class CreateProductDto {
     @IsString()
     description: string;
 
-    @IsInt()
+    @IsString()
     @IsOptional()
-    categoryId?: number;
+    image?: string;
+
+    @IsString()
+    @IsOptional()
+    categoryId?: string;
 }

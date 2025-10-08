@@ -9,6 +9,10 @@ export class UpdateProductDto {
     price: number;
 
     @IsString()
+    @IsOptional()
+    image?: string;
+
+    @IsString()
     description: string;
 
     @IsInt()

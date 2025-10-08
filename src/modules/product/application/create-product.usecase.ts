@@ -1,7 +1,5 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import type { IProductRepository } from "../domain/product.repository";
-import { CreateProductDto } from "../presentation/dto/create-product.dto";
-import { Product } from "../domain/product.entity";
 
 @Injectable()
 export class CreateProductUseCase {
@@ -11,6 +9,8 @@ export class CreateProductUseCase {
     ) { }
 
     async execute(data: any): Promise<void> {
+        data.price = parseFloat(data.price as any);
+
         const product = await this.repository.save(data);
         return product;
     }

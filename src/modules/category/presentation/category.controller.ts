@@ -20,7 +20,6 @@ export class CategoryController {
     constructor(private readonly createCategoryUseCase: CreateCategoryUseCase) { }
 
     @Post()
-    @UseGuards(AuthGuard)
     create(@Body() body: CreateCategorytDto) {
         return this.createCategoryUseCase.execute(body);
     }
@@ -37,13 +36,11 @@ export class CategoryController {
     }
 
     @Put(':id')
-    @UseGuards(AuthGuard)
     update(@Param('id') id: string, @Body() body: UpdateCategoryDto) {
         return this.createCategoryUseCase.executeUpdate(id, body);
     }
 
     @Delete(':id')
-    @UseGuards(AuthGuard)
     remove(@Param('id') id: string) {
         return this.createCategoryUseCase.executeDelete(id);
     }
