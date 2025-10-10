@@ -30,6 +30,8 @@ export class ProductController {
         @Body() data: CreateProductDto
     ) {
 
+        if (file) data.image = file.filename;
+
         await this.product.execute(data);
         return { message: 'Product created successfully' };
     }

@@ -38,7 +38,7 @@ export class PrismaProductRepository implements IProductRepository {
         await this.prisma.product.delete({
             where: {
                 id
-            }
+            },
         });
     }
 
