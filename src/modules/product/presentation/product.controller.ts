@@ -49,11 +49,28 @@ export class ProductController {
         return product;
     }
 
+
     @Put("/products/:id")
-    async updateProduct(@Param("id") id: string, @Body() data: UpdateProductDto) {
-        const product = await this.product.executeUpdate(id, data);
-        return product;
-    }
+    @UseInterceptors(FileInterceptor('image', {
+        storage: diskStorage({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+            },
+        }),
+    }))
+    async updateProduct(
+        @UploadedFile() file: Express.Multer.File,
+        @Param("id") id: string,
+        @Body() data: UpdateProductDto
+    ) {
+
+        if (file) data.image = file.filename;
+
+        await this.product.executeUpdate(id, data);
+        return { message: 'Product created successfully' };
+    } l
 
     @Delete("/products/:id")
     async deleteProduct(@Param("id") id: string) {

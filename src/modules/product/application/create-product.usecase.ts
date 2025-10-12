@@ -17,6 +17,7 @@ export class CreateProductUseCase {
 
     async executeUpdate(id: string, data: any) {
         if (!id) throw new BadRequestException('Id is required');
+        data.price = parseFloat(data.price as any);
 
         const product = await this.repository.update(id, data);
         return product;
