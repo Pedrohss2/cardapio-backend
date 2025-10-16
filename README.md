@@ -1,98 +1,183 @@
+# Cardapio App - Restaurant Menu Management System
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" />
 </p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Cardapio App is a comprehensive restaurant menu management system built with [NestJS](https://nestjs.com/), a progressive Node.js framework. This application allows restaurants to manage their menu items, categories, and user authentication.
 
-## Project setup
+## Features
+
+- **Product Management**: Create, read, update, and delete menu items with image upload support
+- **Category Management**: Organize menu items into categories
+- **User Authentication**: Secure user registration and login with JWT tokens
+- **RESTful API**: Well-structured API endpoints for all functionalities
+- **Database Integration**: Prisma ORM for efficient database operations
+- **File Upload**: Support for product image uploads
+
+## Tech Stack
+
+- **Framework**: [NestJS](https://nestjs.com/)
+- **Language**: TypeScript
+- **Database**: PostgreSQL (via Prisma ORM)
+- **Authentication**: JWT (JSON Web Tokens)
+- **File Upload**: Multer with Sharp for image processing
+- **Validation**: Class-validator
+- **Testing**: Jest
+
+## Project Structure
+
+```
+src/
+├── auth/              # Authentication module
+├── common/prisma/     # Prisma service
+├── errors/            # Custom error handling
+├── modules/
+│   ├── category/      # Category management
+│   ├── product/       # Product management
+│   └── users/         # User management
+├── app.module.ts      # Main application module
+└── main.ts            # Application entry point
+```
+
+## API Endpoints
+
+### Authentication
+- `POST /auth/login` - User login
+- `POST /auth/register` - User registration
+- `GET /auth/profile` - Get user profile (requires authentication)
+
+### Users
+- `POST /users/register` - Register a new user
+- `GET /users/:id` - Get user by ID
+
+### Categories
+- `POST /category` - Create a new category (requires authentication)
+- `GET /category` - Get all categories
+- `GET /category/:id` - Get category by ID (requires authentication)
+- `PUT /category/:id` - Update category by ID (requires authentication)
+- `DELETE /category/:id` - Delete category by ID (requires authentication)
+
+### Products
+- `POST /product` - Create a new product with image upload
+- `GET /product` - Get all products
+- `GET /product/products/:id` - Get product by ID
+- `PUT /product/products/:id` - Update product by ID with image upload
+- `DELETE /product/products/:id` - Delete product by ID
+
+## Project Setup
+
+### Prerequisites
+
+- Node.js (version 16 or higher)
+- npm or yarn
+- PostgreSQL database
+
+### Installation
 
 ```bash
+# Clone the repository
+$ git clone <repository-url>
+
+# Navigate to the project directory
+$ cd cardapio-app
+
+# Install dependencies
 $ npm install
 ```
 
-## Compile and run the project
+### Database Setup
 
-```bash
-# development
-$ npm run start
+1. Create a PostgreSQL database for the application
+2. Copy `.env.example` to `.env` and configure your database connection:
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+DATABASE_URL="postgresql://username:password@localhost:5432/database_name?schema=public"
+JWT_SECRET="your_jwt_secret_key"
 ```
 
-## Run tests
+3. Run database migrations:
 
 ```bash
-# unit tests
+$ npx prisma migrate dev
+```
+
+### Running the Application
+
+```bash
+# Development mode
+$ npm run start:dev
+
+# Production mode
+$ npm run start:prod
+
+# Build the application
+$ npm run build
+```
+
+### Running Tests
+
+```bash
+# Unit tests
 $ npm run test
 
-# e2e tests
+# End-to-end tests
 $ npm run test:e2e
 
-# test coverage
+# Test coverage
 $ npm run test:cov
+```
+
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+# Database
+DATABASE_URL=postgresql://username:password@localhost:5432/cardapio_app?schema=public
+
+# JWT
+JWT_SECRET=your_super_secret_jwt_key
+JWT_EXPIRES_IN=3600
+
+# Server
+PORT=3000
 ```
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+To deploy this application to production:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+1. Set up your production database
+2. Configure environment variables for production
+3. Build the application:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+$ npm run build
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+4. Start the production server:
 
-## Resources
+```bash
+$ npm run start:prod
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Contributing
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a pull request
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [NestJS](https://nestjs.com/) for the amazing framework
+- [Prisma](https://www.prisma.io/) for the ORM
+- All contributors to this project
