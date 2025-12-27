@@ -289,10 +289,4 @@ npm run test:cov
 ## 📄 Licença
 
 MIT License
-
----
-
-## 🔗 Repositório
-
-[https://github.com/Pedrohss2/cardapio-backend](https://github.com/Pedrohss2/cardapio-backend)
 ****
