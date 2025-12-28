@@ -1,7 +1,5 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import type { ICategoryRepository } from "../domain/category.repository";
-import { CreateCategorytDto } from "../presentation/dto/create-category.dto";
-import { Category } from "../domain/category.entity";
 
 @Injectable()
 export class CreateCategoryUseCase {
