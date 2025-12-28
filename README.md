@@ -1,175 +1,292 @@
-# Cardapio App - Restaurant Menu Management System
+# 🍽️ Cardápio App – Restaurant Menu Management System
 
 <p align="center">
   <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" />
 </p>
 
-## Description
+Backend completo para gerenciamento de cardápio de restaurantes.
+Permite autenticação de usuários, criação de categorias e produtos, upload de imagens e persistência de dados usando **NestJS**, **Prisma** e **PostgreSQL**.
 
-Cardapio App is a comprehensive restaurant menu management system built with [NestJS](https://nestjs.com/), a progressive Node.js framework. This application allows restaurants to manage their menu items, categories, and user authentication.
+---
 
-## Features
+## 🚀 Tecnologias
 
-- **Product Management**: Create, read, update, and delete menu items with image upload support
-- **Category Management**: Organize menu items into categories
-- **User Authentication**: Secure user registration and login with JWT tokens
-- **RESTful API**: Well-structured API endpoints for all functionalities
-- **Database Integration**: Prisma ORM for efficient database operations
-- **File Upload**: Support for product image uploads
+* **NestJS**
+* **TypeScript**
+* **PostgreSQL**
+* **Prisma ORM**
+* **JWT (JSON Web Token)**
+* **Multer + Sharp (upload e otimização de imagens)**
+* **Class-validator**
+* **Jest**
 
-## Tech Stack
+---
 
-- **Framework**: [NestJS](https://nestjs.com/)
-- **Language**: TypeScript
-- **Database**: PostgreSQL (via Prisma ORM)
-- **Authentication**: JWT (JSON Web Tokens)
-- **File Upload**: Multer with Sharp for image processing
-- **Validation**: Class-validator
-- **Testing**: Jest
-
-## Project Structure
+## 📁 Estrutura do Projeto
 
 ```
 src/
-├── auth/              # Authentication module
-├── common/prisma/     # Prisma service
-├── errors/            # Custom error handling
+├── auth/              # Autenticação e JWT
+├── common/prisma/     # Prisma Service
+├── errors/            # Erros customizados
 ├── modules/
-│   ├── category/      # Category management
-│   ├── product/       # Product management
-│   └── users/         # User management
-├── app.module.ts      # Main application module
-└── main.ts            # Application entry point
+│   ├── users/         # Usuários
+│   ├── category/      # Categorias
+│   └── product/       # Produtos
+├── app.module.ts
+└── main.ts
 ```
 
-## API Endpoints
+---
 
-### Authentication
-- `POST /auth/login` - User login
-- `POST /auth/register` - User registration
-- `GET /auth/profile` - Get user profile (requires authentication)
+## ⬇️ Clonando e Instalando o Projeto
 
-### Users
-- `POST /users/register` - Register a new user
-- `GET /users/:id` - Get user by ID
-
-### Categories
-- `POST /category` - Create a new category (requires authentication)
-- `GET /category` - Get all categories
-- `GET /category/:id` - Get category by ID (requires authentication)
-- `PUT /category/:id` - Update category by ID (requires authentication)
-- `DELETE /category/:id` - Delete category by ID (requires authentication)
-
-### Products
-- `POST /product` - Create a new product with image upload
-- `GET /product` - Get all products
-- `GET /product/products/:id` - Get product by ID
-- `PUT /product/products/:id` - Update product by ID with image upload
-- `DELETE /product/products/:id` - Delete product by ID
-
-## Project Setup
-
-### Prerequisites
-
-- Node.js (version 16 or higher)
-- npm or yarn
-- PostgreSQL database
-
-### Installation
+### 1. Clonar o repositório
 
 ```bash
-# Clone the repository
-$ git clone https://github.com/Pedrohss2/cardapio-backend.git
-
-# Navigate to the project directory
-$ cd cardapio-app
-
-# Install dependencies
-$ npm install
+git clone https://github.com/Pedrohss2/cardapio-backend.git
 ```
 
-### Database Setup
-
-1. Create a PostgreSQL database for the application
-2. Copy `.env.example` to `.env` and configure your database connection:
-
-```
-DATABASE_URL="postgresql://username:password@localhost:5432/database_name?schema=public"
-JWT_SECRET="your_jwt_secret_key"
-```
-
-3. Run database migrations:
+### 2. Entrar no diretório do projeto
 
 ```bash
-$ npx prisma migrate dev
+cd cardapio-backend
 ```
 
-### Running the Application
+### 3. Instalar dependências
 
 ```bash
-# Development mode
-$ npm run start:dev
-
-# Production mode
-$ npm run start:prod
-
-# Build the application
-$ npm run build
+npm install
 ```
 
-### Running Tests
+### 4. Configurar variáveis de ambiente
 
-```bash
-# Unit tests
-$ npm run test
+Copie o arquivo `.env.example` para `.env` e configure os dados do banco e JWT:
 
-# End-to-end tests
-$ npm run test:e2e
-
-# Test coverage
-$ npm run test:cov
-```
-
-## Environment Variables
-
-Create a `.env` file in the root directory with the following variables:
-
-```
-# Database
-DATABASE_URL=postgresql://username:password@localhost:5432/cardapio_app?schema=public
-
-# JWT
-JWT_SECRET=your_super_secret_jwt_key
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/cardapio_app
+JWT_SECRET=super_secret_key
 JWT_EXPIRES_IN=3600
-
-# Server
 PORT=3000
 ```
 
-## Deployment
-
-To deploy this application to production:
-
-1. Set up your production database
-2. Configure environment variables for production
-3. Build the application:
+### 5. Executar migrations no banco
 
 ```bash
-$ npm run build
+npx prisma migrate dev
 ```
 
-4. Start the production server:
+### 6. Rodar o projeto em desenvolvimento
 
 ```bash
-$ npm run start:prod
+npm run start:dev
 ```
 
-## License
+Após isso, a API estará disponível em `http://localhost:3000`.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+---
 
-## Acknowledgments
+## 🗄️ Banco de Dados – Diagrama Relacional
 
-- [NestJS](https://nestjs.com/) for the amazing framework
-- [Prisma](https://www.prisma.io/) for the ORM
-- All contributors to this project
+```
+┌───────────────────┐          ┌────────────────────┐
+│       users       │          │     categories     │
+├───────────────────┤          ├────────────────────┤
+│ PK id (uuid)      │          │ PK id (uuid)       │
+│ name              │          │ name               │
+│ email (unique)    │          │ createdAt          │
+│ password          │          │ updatedAt          │
+│ createdAt         │          └─────────┬──────────┘
+│ updatedAt         │                    │ 1
+└───────────────────┘                    │
+                                         │
+                                         ▼
+                               ┌────────────────────────┐
+                               │        products        │
+                               ├────────────────────────┤
+                               │ PK id (uuid)           │
+                               │ name                   │
+                               │ price                  │
+                               │ description            │
+                               │ image (nullable)       │
+                               │ FK categoryId (uuid)   │
+                               │ createdAt              │
+                               │ updatedAt              │
+                               └────────────────────────┘
+```
+
+### 🔗 Relacionamentos
+
+* **Category 1 → N Product**
+* **Product pertence opcionalmente a uma Category**
+
+---
+
+## 📦 Tabelas do Banco
+
+### 👤 Users (`users`)
+
+| Campo     | Tipo     | Descrição                  |
+| --------- | -------- | -------------------------- |
+| id        | UUID     | Chave primária             |
+| name      | String   | Nome do usuário            |
+| email     | String   | Único                      |
+| password  | String   | Hash da senha              |
+| createdAt | DateTime | Criado automaticamente     |
+| updatedAt | DateTime | Atualizado automaticamente |
+
+---
+
+### 🗂️ Categories (`categories`)
+
+| Campo     | Tipo     | Descrição         |
+| --------- | -------- | ----------------- |
+| id        | UUID     | Chave primária    |
+| name      | String   | Nome da categoria |
+| createdAt | DateTime | Auto              |
+| updatedAt | DateTime | Auto              |
+
+---
+
+### 🍔 Products (`products`)
+
+| Campo       | Tipo     | Descrição          |
+| ----------- | -------- | ------------------ |
+| id          | UUID     | Chave primária     |
+| name        | String   | Nome do produto    |
+| price       | Float    | Preço              |
+| description | String   | Descrição          |
+| image       | String   | URL da imagem      |
+| categoryId  | UUID     | FK → categories.id |
+| createdAt   | DateTime | Auto               |
+| updatedAt   | DateTime | Auto               |
+
+---
+
+## 🧬 Prisma Schema
+
+```prisma
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products  Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String    @id @default(uuid())
+  name        String
+  price       Float
+  description String
+  image       String?
+
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("products")
+}
+```
+
+---
+
+## 🔐 Autenticação
+
+| Método | Rota           | Descrição           | Auth |
+| ------ | -------------- | ------------------- | ---- |
+| POST   | /auth/register | Cadastro de usuário | ❌    |
+| POST   | /auth/login    | Login + JWT         | ❌    |
+| GET    | /auth/profile  | Perfil do usuário   | ✅    |
+
+---
+
+## 👤 Usuários
+
+| Método | Rota            | Descrição      | Auth |
+| ------ | --------------- | -------------- | ---- |
+| POST   | /users/register | Criar usuário  | ❌    |
+| GET    | /users/:id      | Buscar usuário | ✅    |
+
+---
+
+## 🗂️ Categorias
+
+| Método | Rota          | Descrição           | Auth |
+| ------ | ------------- | ------------------- | ---- |
+| POST   | /category     | Criar categoria     | ✅    |
+| GET    | /category     | Listar categorias   | ❌    |
+| GET    | /category/:id | Buscar categoria    | ✅    |
+| PUT    | /category/:id | Atualizar categoria | ✅    |
+| DELETE | /category/:id | Remover categoria   | ✅    |
+
+---
+
+## 🍕 Produtos
+
+| Método | Rota                  | Descrição              | Auth |
+| ------ | --------------------- | ---------------------- | ---- |
+| POST   | /product              | Criar produto + imagem | ✅    |
+| GET    | /product              | Listar produtos        | ❌    |
+| GET    | /product/products/:id | Buscar produto         | ❌    |
+| PUT    | /product/products/:id | Atualizar produto      | ✅    |
+| DELETE | /product/products/:id | Remover produto        | ✅    |
+
+---
+
+## ⚙️ Variáveis de Ambiente
+
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/cardapio_app
+JWT_SECRET=super_secret_key
+JWT_EXPIRES_IN=3600
+PORT=3000
+```
+
+---
+
+## ▶️ Rodando o Projeto
+
+```bash
+npm install
+npx prisma migrate dev
+npm run start:dev
+```
+
+Após isso, a API estará disponível em `http://localhost:3000`.
+
+---
+
+## 🧪 Testes
+
+```bash
+npm run test
+npm run test:e2e
+npm run test:cov
+```
+
+---
+
+## 📄 Licença
+
+MIT License
+****
