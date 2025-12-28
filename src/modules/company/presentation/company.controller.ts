@@ -10,30 +10,36 @@ export class CompanyController {
   constructor(private readonly useCase: CompanyUseCase) { }
 
   @Post()
-  @ApiOperation({ summary: 'Criar empresa' })
-  @ApiResponse({ status: 201, description: 'Criar empresas' })
+  @ApiOperation({ summary: 'Create company' })
+  @ApiResponse({ status: 201, description: 'Create company' })
   create(@Body() body: CreateCompanyDto) {
     return this.useCase.execute(body);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar usuários' })
-  @ApiResponse({ status: 200, description: 'Lista de usuários' })
+  @ApiOperation({ summary: 'Get all company' })
+  @ApiResponse({ status: 200, description: 'Get all company' })
   findAll() {
     return this.useCase.executeFindAll();
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get company by id' })
+  @ApiResponse({ status: 200, description: 'Get company by id' })
   findOne(@Param('id') id: string) {
     return this.useCase.executeFindById(id);
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update company ' })
+  @ApiResponse({ status: 200, description: 'Update company' })
   update(@Param('id') id: string, @Body() body: UpdateCompanyDto) {
     return this.useCase.executeUpdate(id, body);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete company' })
+  @ApiResponse({ status: 200, description: 'Delete company' })
   remove(@Param('id') id: string) {
     return this.useCase.executeDelete(id);
   }
