@@ -1,10 +1,11 @@
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterUserUseCase } from '../modules/users/application/register-user.usecase';
 import { User } from '../modules/users/domain/user.entity';
 import { RegisterUserDto } from 'src/modules/users/presentation/dto/register-user.dto';
 import { LoginUserDto } from 'src/modules/users/presentation/dto/login-user.dto';
+import type { UserCompanyRepository } from 'src/modules/user-company/domain/user-company.repository';
 
 
 @Injectable()
@@ -12,12 +13,14 @@ export class AuthService {
     constructor(
         private readonly registerUserUseCase: RegisterUserUseCase,
         private readonly jwtService: JwtService,
+        @Inject('IUserCompanyRepository')
+        private readonly userCompanyRepository: UserCompanyRepository,
     ) { }
 
     async signIn(
         loginUserDto: LoginUserDto
     ): Promise<{ access_token: string }> {
-        const { email, password } = loginUserDto;
+        const { email, password, companyId } = loginUserDto;
 
         const user = await this.registerUserUseCase.findByEmail(email);
 
@@ -35,7 +38,21 @@ export class AuthService {
             }, HttpStatus.UNAUTHORIZED)
         }
 
-        const payload = { sub: user.id, email: user.email };
+        // determine active companyId: use provided one (if linked) or fallback to first linked company
+        let activeCompanyId: string | null = null;
+
+        if (companyId) {
+            const linked = await this.userCompanyRepository.findByUserAndCompany(user.id, companyId);
+            if (!linked) {
+                throw new HttpException({ status: HttpStatus.FORBIDDEN, error: 'User not linked to company' }, HttpStatus.FORBIDDEN);
+            }
+            activeCompanyId = companyId;
+        } else {
+            const links = await this.userCompanyRepository.findByUserId(user.id);
+            if (links && links.length > 0) activeCompanyId = (links[0] as any).companyId;
+        }
+
+        const payload = { sub: user.id, email: user.email, companyId: activeCompanyId };
         return {
             access_token: await this.jwtService.signAsync(payload),
         };

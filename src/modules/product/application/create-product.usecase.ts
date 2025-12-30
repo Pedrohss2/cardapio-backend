@@ -1,4 +1,5 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { ImageService } from '../infrastructure/image.service';
 import type { IProductRepository } from "../domain/product.repository";
 import type { CompanyRepository } from '../../company/domain/company.repository';
 
@@ -9,9 +10,10 @@ export class CreateProductUseCase {
         private readonly repository: IProductRepository,
         @Inject('ICompanyRepository')
         private readonly companyRepository: CompanyRepository,
+        private readonly imageService: ImageService,
     ) { }
 
-    async execute(data: any): Promise<void> {
+    async execute(data: any, file?: Express.Multer.File): Promise<void> {
         data.price = parseFloat(data.price as any);
 
         if (!data.companyId) throw new BadRequestException('companyId is required');
@@ -19,17 +21,28 @@ export class CreateProductUseCase {
         const company = await this.companyRepository.findById(data.companyId);
         if (!company) throw new BadRequestException('Company not found');
 
+        // handle image if provided
+        if (file) {
+            const filename = await this.imageService.saveFile(file);
+            data.image = filename;
+        }
+
         const product = await this.repository.save(data);
         return product;
     }
 
-    async executeUpdate(id: string, data: any) {
+    async executeUpdate(id: string, data: any, file?: Express.Multer.File) {
         if (!id) throw new BadRequestException('Id is required');
         data.price = parseFloat(data.price as any);
 
         if (data.companyId) {
             const company = await this.companyRepository.findById(data.companyId);
             if (!company) throw new BadRequestException('Company not found');
+        }
+
+        if (file) {
+            const filename = await this.imageService.saveFile(file);
+            data.image = filename;
         }
 
         const product = await this.repository.update(id, data);

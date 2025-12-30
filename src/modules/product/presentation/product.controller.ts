@@ -4,7 +4,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
 
-import { diskStorage } from 'multer';
+import { memoryStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path'
 
@@ -30,23 +30,15 @@ export class ProductController {
             },
         },
     })
+
     @UseInterceptors(FileInterceptor('image', {
-        storage: diskStorage({
-            destination: './uploads',
-            filename: (req, file, cb) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-                cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-            },
-        }),
+        storage: memoryStorage(),
     }))
     async createProduct(
         @UploadedFile() file: Express.Multer.File,
         @Body() data: CreateProductDto
     ) {
-
-        if (file) data.image = file.filename;
-
-        await this.product.execute(data);
+        await this.product.execute(data, file);
         return { message: 'Product created successfully' };
     }
 
@@ -83,23 +75,14 @@ export class ProductController {
         },
     })
     @UseInterceptors(FileInterceptor('image', {
-        storage: diskStorage({
-            destination: './uploads',
-            filename: (req, file, cb) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-                cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-            },
-        }),
+        storage: memoryStorage(),
     }))
     async updateProduct(
         @UploadedFile() file: Express.Multer.File,
         @Param('id') id: string,
         @Body() data: UpdateProductDto
     ) {
-
-        if (file) data.image = file.filename;
-
-        await this.product.executeUpdate(id, data);
+        await this.product.executeUpdate(id, data, file);
         return { message: 'Product updated successfully' };
     }
 

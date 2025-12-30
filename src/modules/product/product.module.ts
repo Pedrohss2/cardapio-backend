@@ -4,6 +4,7 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CreateProductUseCase } from './application/create-product.usecase';
 import { PrismaProductRepository } from './infrastructure/prisma-product.repository';
 import { PrismaCompanyRepository } from '../company/infrastructure/prisma-company.repository';
+import { ImageService } from './infrastructure/image.service';
 
 
 @Module({
@@ -11,6 +12,7 @@ import { PrismaCompanyRepository } from '../company/infrastructure/prisma-compan
   providers: [
     PrismaService,
     CreateProductUseCase,
+    ImageService,
     PrismaProductRepository,
     PrismaCompanyRepository,
     { provide: 'IProductRepository', useClass: PrismaProductRepository },

@@ -1,4 +1,4 @@
-import { IsString, IsEmail } from 'class-validator';
+import { IsString, IsEmail, IsOptional } from 'class-validator';
 
 export class LoginUserDto {
     constructor() { }
@@ -7,4 +7,8 @@ export class LoginUserDto {
 
     @IsString()
     password: string;
+
+    @IsOptional()
+    @IsString()
+    companyId: string;
 }
