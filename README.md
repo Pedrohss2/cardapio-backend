@@ -89,36 +89,30 @@ Após isso, a API estará disponível em `http://localhost:3000`.
 ## 🗄️ Banco de Dados – Diagrama Relacional
 
 ```
-┌───────────────────┐          ┌────────────────────┐
-│       users       │          │     categories     │
-├───────────────────┤          ├────────────────────┤
-│ PK id (uuid)      │          │ PK id (uuid)       │
-│ name              │          │ name               │
-│ email (unique)    │          │ createdAt          │
-│ password          │          │ updatedAt          │
-│ createdAt         │          └─────────┬──────────┘
-│ updatedAt         │                    │ 1
-└───────────────────┘                    │
-                                         │
-                                         ▼
-                               ┌────────────────────────┐
-                               │        products        │
-                               ├────────────────────────┤
-                               │ PK id (uuid)           │
-                               │ name                   │
-                               │ price                  │
-                               │ description            │
-                               │ image (nullable)       │
-                               │ FK categoryId (uuid)   │
-                               │ createdAt              │
-                               │ updatedAt              │
-                               └────────────────────────┘
+┌───────────────────┐          ┌──────────────────────────┐          ┌────────────────────┐
+│       users       │ 1      N │      user_companies      │ N      1 │     companies      │
+├───────────────────┤──────────▶──────────────────────────◀──────────├────────────────────┤
+│ PK id             │          │ PK id                    │          │ PK id              │
+│ ...               │          │ FK userId                │          │ ...                │
+└───────────────────┘          │ FK companyId             │          └───────┬────────────┘
+                               └──────────────────────────┘                  │ 1
+                                                                             │
+                                                                             ▼ N
+                               ┌────────────────────┐             ┌───────────────────────┐
+                               │     categories     │ 1         N │       products        │
+                               ├────────────────────┤─────────────▶───────────────────────┤
+                               │ PK id              │             │ PK id                 │
+                               │ ...                │             │ FK companyId          │
+                               └────────────────────┘             │ FK categoryId         │
+                                                                  └───────────────────────┘
 ```
 
 ### 🔗 Relacionamentos
 
-* **Category 1 → N Product**
-* **Product pertence opcionalmente a uma Category**
+* **User 1 ↔ N UserCompany ↔ 1 Company**: Relação N:N resolvida via tabela pivô para gerenciar permissões.
+* **Company 1 → N Product**: Uma empresa possui vários produtos.
+* **Category 1 → N Product**: Uma categoria agrupa vários produtos.
+* **Product pertence a uma Company e opcionalmente a uma Category**.
 
 ---
 
@@ -150,61 +144,131 @@ Após isso, a API estará disponível em `http://localhost:3000`.
 
 ### 🍔 Products (`products`)
 
-| Campo       | Tipo     | Descrição          |
-| ----------- | -------- | ------------------ |
-| id          | UUID     | Chave primária     |
-| name        | String   | Nome do produto    |
-| price       | Float    | Preço              |
-| description | String   | Descrição          |
-| image       | String   | URL da imagem      |
-| categoryId  | UUID     | FK → categories.id |
-| createdAt   | DateTime | Auto               |
-| updatedAt   | DateTime | Auto               |
+| Campo       | Tipo     | Descrição           |
+| ----------- | -------- | ------------------- |
+| id          | UUID     | Chave primária      |
+| name        | String   | Nome do produto     |
+| price       | Float    | Preço               |
+| description | String   | Descrição           |
+| image       | String   | URL da imagem       |
+| categoryId  | UUID     | FK → categories.id  |
+| companyId   | UUID     | FK → companies.id   |
+| createdAt   | DateTime | Auto                |
+| updatedAt   | DateTime | Auto                |
+
+---
+
+### 🏢 Companies (`companies`)
+
+| Campo     | Tipo     | Descrição           |
+| --------- | -------- | ------------------- |
+| id        | UUID     | Chave primária      |
+| name      | String   | Nome da empresa     |
+| address   | String   | Endereço            |
+| phone     | String   | Telefone            |
+| email     | String   | Email (Único)       |
+| createdAt | DateTime | Auto                |
+| updatedAt | DateTime | Auto                |
+
+---
+
+### 👥 User Companies (`user_companies`)
+
+| Campo     | Tipo     | Descrição           |
+| --------- | -------- | ------------------- |
+| id        | UUID     | Chave primária      |
+| userId    | UUID     | FK → users.id       |
+| companyId | UUID     | FK → companies.id   |
+| createdAt | DateTime | Auto                |
+| updatedAt | DateTime | Auto                |
 
 ---
 
 ## 🧬 Prisma Schema
 
 ```prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
 
-model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id String @id @default(uuid())
+
+  name    String
+  address String
+  phone   String
+  email   String @unique
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  userCompanies UserCompany[]
+  products      Product[]
+
+  @@map("companies")
+}
+
+model UserCompany {
+  id        String @id @default(uuid())
+  userId    String
+  companyId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@unique([userId, companyId])
+  @@map("user_companies")
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  userCompanies UserCompany[]
 
   @@map("users")
 }
 
-model Category {
-  id        String    @id @default(uuid())
-  name      String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  products  Product[]
-
-  @@map("categories")
-}
-
 model Product {
-  id          String    @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
   price       Float
   description String
   image       String?
 
-  categoryId  String?
-  category    Category? @relation(fields: [categoryId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categoryId String
+  companyId  String
+  company    Company   @relation(fields: [companyId], references: [id])
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  @@map("products")
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("products")
+  products Product[]
+
+  @@map("categories")
 }
 ```
 
@@ -212,44 +276,67 @@ model Product {
 
 ## 🔐 Autenticação
 
-| Método | Rota           | Descrição           | Auth |
-| ------ | -------------- | ------------------- | ---- |
-| POST   | /auth/register | Cadastro de usuário | ❌    |
-| POST   | /auth/login    | Login + JWT         | ❌    |
-| GET    | /auth/profile  | Perfil do usuário   | ✅    |
+| Método | Rota           | Descrição           |
+| ------ | -------------- | ------------------- |
+| POST   | /auth/register | Cadastro de usuário |
+| POST   | /auth/login    | Login + JWT         |
+| GET    | /auth/profile  | Perfil do usuário   |
 
 ---
 
 ## 👤 Usuários
 
-| Método | Rota            | Descrição      | Auth |
-| ------ | --------------- | -------------- | ---- |
-| POST   | /users/register | Criar usuário  | ❌    |
-| GET    | /users/:id      | Buscar usuário | ✅    |
+| Método | Rota            | Descrição      |
+| ------ | --------------- | -------------- |
+| POST   | /users/register | Criar usuário  |
+| GET    | /users/:id      | Buscar usuário |
+
+---
+
+## 🏢 Empresas (Companies)
+
+| Método | Rota         | Descrição           |
+| ------ | ------------ | ------------------- |
+| POST   | /company     | Criar empresa       |
+| GET    | /company     | Listar empresas     |
+| GET    | /company/:id | Buscar empresa      |
+| PUT    | /company/:id | Atualizar empresa   |
+| DELETE | /company/:id | Remover empresa     |
+
+---
+
+## 👥 Usuário-Empresa (UserCompany)
+
+| Método | Rota                             | Descrição                     |
+| ------ | -------------------------------- | ----------------------------- |
+| POST   | /user-company                    | Associar usuário à empresa    |
+| GET    | /user-company                    | Listar todas as associações   |
+| GET    | /user-company/user/:userId       | Listar empresas de um usuário |
+| DELETE | /user-company/:userId/:companyId | Remover usuário da empresa    |
 
 ---
 
 ## 🗂️ Categorias
 
-| Método | Rota          | Descrição           | Auth |
-| ------ | ------------- | ------------------- | ---- |
-| POST   | /category     | Criar categoria     | ✅    |
-| GET    | /category     | Listar categorias   | ❌    |
-| GET    | /category/:id | Buscar categoria    | ✅    |
-| PUT    | /category/:id | Atualizar categoria | ✅    |
-| DELETE | /category/:id | Remover categoria   | ✅    |
+| Método | Rota          | Descrição           |
+| ------ | ------------- | ------------------- |
+| POST   | /category     | Criar categoria     |
+| GET    | /category     | Listar categorias   |
+| GET    | /category/:id | Buscar categoria    |
+| PUT    | /category/:id | Atualizar categoria |
+| DELETE | /category/:id | Remover categoria   |
 
 ---
 
 ## 🍕 Produtos
 
-| Método | Rota                  | Descrição              | Auth |
-| ------ | --------------------- | ---------------------- | ---- |
-| POST   | /product              | Criar produto + imagem | ✅    |
-| GET    | /product              | Listar produtos        | ❌    |
-| GET    | /product/products/:id | Buscar produto         | ❌    |
-| PUT    | /product/products/:id | Atualizar produto      | ✅    |
-| DELETE | /product/products/:id | Remover produto        | ✅    |
+| Método | Rota                  | Descrição              |
+| ------ | --------------------- | ---------------------- |
+| POST   | /product              | Criar produto + imagem |
+| GET    | /product              | Listar produtos        |
+| GET    | /product/products/:id | Buscar produto         |
+| PUT    | /product/products/:id | Atualizar produto      |
+| DELETE | /product/products/:id | Remover produto        |
 
 ---
 
