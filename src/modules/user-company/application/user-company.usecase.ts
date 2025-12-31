@@ -27,4 +27,8 @@ export class UserCompanyUseCase {
   async executeDelete(userId: string, companyId: string) {
     return this.repository.deleteByUserAndCompany(userId, companyId);
   }
+
+  async executeFindAll() {
+    return this.repository.findAll();
+  }
 }

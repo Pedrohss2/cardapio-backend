@@ -14,6 +14,12 @@ export class UserCompanyController {
     return this.useCase.execute(body);
   }
 
+  @Get()
+  @ApiOperation({ summary: 'List all user-company associations' })
+  findAll() {
+    return this.useCase.executeFindAll();
+  }
+
   @Get('user/:userId')
   @ApiOperation({ summary: 'List companies for user' })
   findByUser(@Param('userId') userId: string) {

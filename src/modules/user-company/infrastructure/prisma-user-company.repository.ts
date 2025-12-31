@@ -22,4 +22,8 @@ export class PrismaUserCompanyRepository implements UserCompanyRepository {
     async findByUserAndCompany(userId: string, companyId: string): Promise<UserCompany | null> {
         return await this.prisma.userCompany.findFirst({ where: { userId, companyId } });
     }
+
+    async findAll(): Promise<UserCompany[]> {
+        return await this.prisma.userCompany.findMany({ include: { user: true, company: true } });
+    }
 }

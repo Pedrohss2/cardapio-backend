@@ -5,4 +5,5 @@ export interface UserCompanyRepository {
   deleteByUserAndCompany(userId: string, companyId: string): Promise<void>;
   findByUserId(userId: string): Promise<UserCompany[]>;
   findByUserAndCompany(userId: string, companyId: string): Promise<UserCompany | null>;
+  findAll(): Promise<UserCompany[]>;
 }
