@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { CreateProductUseCase } from '../application/create-product.usecase';
+import { CreateProductUseCase } from '../application/usecases/create-product.usecase';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
@@ -74,6 +74,7 @@ export class ProductController {
             },
         },
     })
+
     @UseInterceptors(FileInterceptor('image', {
         storage: memoryStorage(),
     }))

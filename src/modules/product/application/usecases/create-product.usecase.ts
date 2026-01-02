@@ -1,7 +1,8 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { ImageService } from '../infrastructure/image.service';
-import type { IProductRepository } from "../domain/product.repository";
-import type { CompanyRepository } from '../../company/domain/company.repository';
+import { ImageService } from '../../infrastructure/image.service';
+import type { IProductRepository } from "../../domain/product.repository";
+import type { CompanyRepository } from '../../../company/domain/company.repository';
+import { Product } from "../../domain/product.entity";
 
 @Injectable()
 export class CreateProductUseCase {
@@ -14,26 +15,28 @@ export class CreateProductUseCase {
     ) { }
 
     async execute(data: any, file?: Express.Multer.File): Promise<void> {
-        data.price = parseFloat(data.price as any);
 
-        if (!data.companyId) throw new BadRequestException('companyId is required');
+        data.price = Number(data.price);
 
         const company = await this.companyRepository.findById(data.companyId);
-        if (!company) throw new BadRequestException('Company not found');
+        if (!company) {
+            throw new BadRequestException('Company not found');
+        }
 
-        // handle image if provided
         if (file) {
             const filename = await this.imageService.saveFile(file);
             data.image = filename;
         }
 
         const product = await this.repository.save(data);
-        return product;
     }
 
     async executeUpdate(id: string, data: any, file?: Express.Multer.File) {
         if (!id) throw new BadRequestException('Id is required');
-        data.price = parseFloat(data.price as any);
+
+        if (data.price) {
+            data.price = Number(data.price);
+        }
 
         if (data.companyId) {
             const company = await this.companyRepository.findById(data.companyId);
@@ -60,7 +63,8 @@ export class CreateProductUseCase {
     }
 
     async executeDelete(id: string) {
+        if (!id) throw new BadRequestException('Id is required');
+
         const product = await this.repository.delete(id);
-        return product;
     }
 }
