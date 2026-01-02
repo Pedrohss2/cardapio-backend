@@ -3,6 +3,7 @@ import { IProductRepository } from "../domain/product.repository";
 import { Product } from "../domain/product.entity";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import type { CachePort } from '../application/ports/cache.port';
+import { UpdateProductDto } from "../presentation/dto/update-product.dto";
 
 @Injectable()
 export class PrismaProductRepository implements IProductRepository {
@@ -54,7 +55,7 @@ export class PrismaProductRepository implements IProductRepository {
         return product;
     }
 
-    async update(id: string, product: Product): Promise<any> {
+    async update(id: string, product: UpdateProductDto): Promise<any> {
         const updated = await this.prisma.product.update({
             where: { id },
             data: product

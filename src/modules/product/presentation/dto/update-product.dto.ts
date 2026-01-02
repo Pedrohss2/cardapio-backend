@@ -8,12 +8,17 @@ export class UpdateProductDto {
     @Min(0)
     price: number;
 
-    @IsString()
-    @IsOptional()
-    image?: string;
 
     @IsString()
     description: string;
+
+    @IsNumberString()
+    @Min(0)
+    status?: number;
+
+    @IsString()
+    @IsOptional()
+    image?: string;
 
     @IsOptional()
     @IsString()

@@ -48,9 +48,12 @@ model UserCompany {
 }
 
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
+  id    String @id @default(uuid())
+  name  String
+  email String @unique
+
+  status Int? @default(1) // Aqui o status 1 é ativo e 0 é inativo
+
   password String
 
   createdAt     DateTime      @default(now())
@@ -69,6 +72,8 @@ model Product {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  status Int? @default(1) // Aqui o status 1 é ativo e 0 é inativo
 
   categoryId String
   companyId  String

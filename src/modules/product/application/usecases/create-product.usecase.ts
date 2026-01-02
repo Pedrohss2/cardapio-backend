@@ -3,6 +3,7 @@ import { ImageService } from '../../infrastructure/image.service';
 import type { IProductRepository } from "../../domain/product.repository";
 import type { CompanyRepository } from '../../../company/domain/company.repository';
 import { Product } from "../../domain/product.entity";
+import { UpdateProductDto } from "../../presentation/dto/update-product.dto";
 
 @Injectable()
 export class CreateProductUseCase {
@@ -31,7 +32,7 @@ export class CreateProductUseCase {
         const product = await this.repository.save(data);
     }
 
-    async executeUpdate(id: string, data: any, file?: Express.Multer.File) {
+    async executeUpdate(id: string, data: UpdateProductDto, file?: Express.Multer.File) {
         if (!id) throw new BadRequestException('Id is required');
 
         if (data.price) {
