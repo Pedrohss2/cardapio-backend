@@ -437,13 +437,3 @@ npm run test:e2e
 # Cobertura de testes
 npm run test:cov
 ```
-
----
-
-## 📄 Licença
-
-MIT License
-
----
-
-**Desenvolvido com ❤️ usando NestJS**
