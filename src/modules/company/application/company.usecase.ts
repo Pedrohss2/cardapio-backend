@@ -2,10 +2,10 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { Company } from '../domain/company.entity';
 import type { CompanyRepository } from '../domain/company.repository';
-import { RegisterUserUseCase } from 'src/modules/users/application/register-user.usecase';
-import { User } from 'src/modules/users/domain/user.entity';
-import { UserCompany } from 'src/modules/user-company/domain/user-company.entity';
-import type { UserCompanyRepository } from 'src/modules/user-company/domain/user-company.repository';
+import { RegisterUserUseCase } from 'src/modules/users/application/usecases/register-user.usecase';
+import { User } from 'src/modules/users/domain/entity/user.entity';
+import { UserCompany } from 'src/modules/user-company/domain/entity/user-company.entity';
+import type { UserCompanyRepository } from 'src/modules/user-company/domain/repository/user-company.repository';
 
 @Injectable()
 export class CompanyUseCase {

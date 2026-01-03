@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { RegisterUserUseCase } from '../modules/users/application/register-user.usecase';
-import { User } from '../modules/users/domain/user.entity';
+import { RegisterUserUseCase } from '../modules/users/application/usecases/register-user.usecase';
+import { User } from '../modules/users/domain/entity/user.entity';
 import { RegisterUserDto } from 'src/modules/users/presentation/dto/register-user.dto';
 import { LoginUserDto } from 'src/modules/users/presentation/dto/login-user.dto';
-import type { UserCompanyRepository } from 'src/modules/user-company/domain/user-company.repository';
+import type { UserCompanyRepository } from 'src/modules/user-company/domain/repository/user-company.repository';
 
 
 @Injectable()
@@ -38,7 +38,6 @@ export class AuthService {
             }, HttpStatus.UNAUTHORIZED)
         }
 
-        // determine active companyId: use provided one (if linked) or fallback to first linked company
         let activeCompanyId: string | null = null;
 
         if (companyId) {

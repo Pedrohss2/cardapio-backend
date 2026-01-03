@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import type { UserRepository } from '../domain/user.repository';
-import { User } from '../domain/user.entity';
-import { RegisterUserDto } from '../presentation/dto/register-user.dto';
+import type { UserRepository } from '../../domain/repository/user.repository';
+import { User } from '../../domain/entity/user.entity';
+import { RegisterUserDto } from '../../presentation/dto/register-user.dto';
 
 @Injectable()
 export class FindUserByIdUseCase {

@@ -1,6 +1,6 @@
 import { PrismaService } from "src/common/prisma/prisma.service";
-import { IProductRepository } from "../domain/product.repository";
-import { Product } from "../domain/product.entity";
+import { IProductRepository } from "../domain/repository/product.repository";
+import { Product } from "../domain/entity/product.entity";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import type { CachePort } from '../application/ports/cache.port';
 import { UpdateProductDto } from "../presentation/dto/update-product.dto";

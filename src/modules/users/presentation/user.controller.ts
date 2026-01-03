@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { RegisterUserUseCase } from '../application/register-user.usecase';
-import { FindUserByIdUseCase } from '../application/find-user-by-id.usecase';
+import { RegisterUserUseCase } from '../application/usecases/register-user.usecase';
+import { FindUserByIdUseCase } from '../application/usecases/find-user-by-id.usecase';
 import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('Users')

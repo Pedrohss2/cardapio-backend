@@ -1,6 +1,6 @@
 import { PrismaService } from "src/common/prisma/prisma.service";
-import { ICategoryRepository } from "../domain/category.repository";
-import { Category } from "../domain/category.entity";
+import { ICategoryRepository } from "../domain/repository/category.repository";
+import { Category } from "../domain/entity/category.entity";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { Category } from "./category.entity";
+import { Category } from "../entity/category.entity";
 
 export interface ICategoryRepository {
     save(category: Category): Promise<void>;

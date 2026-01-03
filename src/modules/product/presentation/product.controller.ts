@@ -1,18 +1,25 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CreateProductUseCase } from '../application/usecases/create-product.usecase';
+import { FindAllProductUseCase } from '../application/usecases/find-all-product.usecase';
+import { UpdateProductUseCase } from '../application/usecases/update-product.usecase';
+import { DeleteProductUseCase } from '../application/usecases/delete-product.usecase';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
-
 import { memoryStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { extname } from 'path'
+import { extname } from 'path';
 
 @ApiTags('Product')
 @Controller('product')
 export class ProductController {
 
-    constructor(private readonly product: CreateProductUseCase) { }
+    constructor(
+        private readonly createProduct: CreateProductUseCase,
+        private readonly findAllProduct: FindAllProductUseCase,
+        private readonly updateProduct: UpdateProductUseCase,
+        private readonly deleteProduct: DeleteProductUseCase,
+    ) { }
 
     @Post()
     @ApiOperation({ summary: 'Create product' })
@@ -34,28 +41,22 @@ export class ProductController {
     @UseInterceptors(FileInterceptor('image', {
         storage: memoryStorage(),
     }))
-    async createProduct(
+    async create(
         @UploadedFile() file: Express.Multer.File,
         @Body() data: CreateProductDto
     ) {
-        await this.product.execute(data, file);
+        await this.createProduct.execute(data, file);
         return { message: 'Product created successfully' };
     }
 
     @Get()
     @ApiOperation({ summary: 'List products' })
-    async getProducts() {
-        const products = await this.product.executeFindAll();
+    async findAll() {
+        const products = await this.findAllProduct.execute();
         return products;
     }
 
-    @Get('/products/:id')
-    @ApiOperation({ summary: 'Get product by id' })
-    async getProduct(@Param('id') id: string) {
-        const product = await this.product.executeFindById(id);
 
-        return product;
-    }
 
 
     @Put('/products/:id')
@@ -78,20 +79,20 @@ export class ProductController {
     @UseInterceptors(FileInterceptor('image', {
         storage: memoryStorage(),
     }))
-    async updateProduct(
+    async update(
         @UploadedFile() file: Express.Multer.File,
         @Param('id') id: string,
         @Body() data: UpdateProductDto
     ) {
-        await this.product.executeUpdate(id, data, file);
+        await this.updateProduct.execute(id, data, file);
         return { message: 'Product updated successfully' };
     }
 
     @Delete('/products/:id')
     @ApiOperation({ summary: 'Delete product' })
-    async deleteProduct(@Param('id') id: string) {
-        const product = await this.product.executeDelete(id);
-        return product;
+    async delete(@Param('id') id: string) {
+        await this.deleteProduct.execute(id);
+        return { message: 'Product deleted successfully' };
     }
 
 }
